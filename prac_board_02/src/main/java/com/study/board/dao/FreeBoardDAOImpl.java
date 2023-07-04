@@ -1,6 +1,7 @@
 package com.study.board.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.SqlSession;
@@ -78,4 +79,14 @@ public class FreeBoardDAOImpl implements FreeBoardDAO {
     public List<FreeBoardVO> getBoardList(PagingVO paging) {
         return sqlSession.selectList("com.study.board.dao.FreeBoardDAO.getBoardList", paging);
     }
+
+    @Override
+    public List<String> getAttachedFiles(int bNo) {
+      return sqlSession.selectList("com.study.board.dao.FreeBoardDAO.getAttachedFiles", bNo);
+    }
+
+	@Override
+	public FreeBoardVO getBoardWithFiles(int bNo) {
+		return sqlSession.selectOne("con.study.board.dao.FreeBoardDAO.getBoardWithFiles", bNo);
+	}
 }

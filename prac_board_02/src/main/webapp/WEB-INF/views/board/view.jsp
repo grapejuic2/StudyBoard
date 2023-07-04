@@ -67,7 +67,6 @@ h1 {
 	color: #333;
 	font-weight: bold;
 	border-radius: 4px;
-	
 }
 
 .file-list {
@@ -80,8 +79,8 @@ h1 {
 	text-decoration: none;
 	color: #333;
 }
-
 </style>
+</head>
 <body>
 	<div class="container">
 		<h1>
@@ -90,23 +89,33 @@ h1 {
 				<span class="notice-label">공지</span>
 			</c:if>
 		</h1>
-		<p class="meta">글번호: ${freeBoard.bNo} | 작성자: ${freeBoard.bWriter} | 등록일:
-			${freeBoard.bRegDate} | 조회수: ${freeBoard.bHit} | 글분류:
+		<p class="meta">글번호: ${freeBoard.bNo} | 작성자: ${freeBoard.bWriter}
+			| 등록일: ${freeBoard.bRegDate} | 조회수: ${freeBoard.bHit} | 글분류:
 			${freeBoard.bCategory}</p>
+
 		<div class="content">
 			<pre>${freeBoard.bContent}</pre>
 		</div>
+
 		<div class="attachments">
-		    <h3>첨부파일</h3>
-		    <c:forEach items="${freeBoard.fileList}" var="file">
-		        <p>${file.originalFileName} (${file.fileSize} bytes)</p>
-		    </c:forEach>
+		    <c:if test="${not empty freeBoard.viewfileList}">
+		        <h3>첨부 파일 목록</h3>
+		        <ul>
+		            <c:forEach var="fileMap" items="${freeBoard.viewfileList}">
+		                <li>
+		                    파일명: ${fileMap.originalFileName} (크기: ${fileMap.fileSize} bytes)
+		                </li>
+		            </c:forEach>
+		        </ul>
+		    </c:if>
 		</div>
+
 		<div class="buttons">
-			<a href="edit.do?bNo=${freeBoard.bNo}">수정</a> 
-			<a href="replyForm.do?parentNo=${freeBoard.bNo}">답글</a>
-			<a href="list.do">목록</a>
+			<a href="edit.do?bNo=${freeBoard.bNo}">수정</a> <a
+				href="replyForm.do?parentNo=${freeBoard.bNo}">답글</a> <a
+				href="list.do">목록</a>
 		</div>
+
 	</div>
 </body>
 </html>

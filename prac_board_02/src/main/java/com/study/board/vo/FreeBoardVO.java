@@ -1,6 +1,7 @@
 package com.study.board.vo;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -33,6 +34,16 @@ public class FreeBoardVO {
 
 	//다중 파일 업로드
 	private List<MultipartFile> fileList;	//다중 파일 업로드
+	private List<Map<String, Object>> viewfileList;
+	
+	
+	public List<Map<String, Object>> getViewfileList() {
+	    return viewfileList;
+	}
+
+	public void setViewfileList(List<Map<String, Object>> viewfileList) {
+	    this.viewfileList = viewfileList;
+	}
 	
 	public String getDepthString() {
 		return depthString;

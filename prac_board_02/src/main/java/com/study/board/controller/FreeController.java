@@ -71,13 +71,18 @@ public class FreeController {
 			visitedBoardSet.add(bNo);
 		}
 
-		FreeBoardVO freeBoard = freeBoardService.getNotice(bNo);
-		if ("Y".equals(freeBoard.getbNoticeYn())) {
-			freeBoard.setbCategory("공지");
-		}
+	    FreeBoardVO freeBoard = freeBoardService.getNotice(bNo);
+	    if ("Y".equals(freeBoard.getbNoticeYn())) {
+	        freeBoard.setbCategory("공지");
+	    }
 
-		model.addAttribute("freeBoard", freeBoard);
-		return "board/view";
+	    // 게시물에 대한 첨부 파일 정보 가져오기
+	    List<String> attachedFiles = freeBoardService.getAttachedFiles(bNo);
+
+	    model.addAttribute("freeBoard", freeBoard);
+	    model.addAttribute("attachedFiles", attachedFiles);
+
+	    return "board/view";
 	}
 
 	// 게시물 수정
@@ -99,50 +104,54 @@ public class FreeController {
 	// 게시물 등록
 	@RequestMapping(value = "regist.do", method = RequestMethod.POST)
 	public String boardRegist(@ModelAttribute("freeBoard") FreeBoardVO freeBoard, MultipartHttpServletRequest files)
-			throws Exception {
-		String uploadFolder = "C:\\test\\upload";
-		List<MultipartFile> list = files.getFiles("files");
-		List<Map<String, Object>> viewfileList = new ArrayList<>();
+	        throws Exception {
+	    String uploadFolder = "C:\\test\\upload";
+	    List<MultipartFile> fileList = files.getFiles("files");
+	    List<Map<String, Object>> attachedFiles = new ArrayList<>();
 
-		for (int i = 0; i < list.size(); i++) {
-			String fileRealName = list.get(i).getOriginalFilename();
-			long filesize = list.get(i).getSize();
+	    for (MultipartFile file : fileList) {
+	        String originalFileName = file.getOriginalFilename();
+	        long fileSize = file.getSize();
 
-			System.out.println("파일명 : " + fileRealName);
-			System.out.println("파일크기 : " + filesize);
+	        System.out.println("파일명: " + originalFileName);
+	        System.out.println("파일크기: " + fileSize);
 
-			File saveFile = new File(uploadFolder + "\\" + fileRealName);
-		    Map<String, Object> fileMap = new HashMap<>();
-		    fileMap.put("originalFileName", fileRealName);
-		    fileMap.put("fileSize", filesize);
-			try {
-				list.get(i).transferTo(saveFile);
-				viewfileList.add(fileMap);
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+	        File saveFile = new File(uploadFolder + "\\" + originalFileName);
+	        Map<String, Object> fileMap = new HashMap<>();
+	        fileMap.put("originalFileName", originalFileName);
+	        fileMap.put("fileSize", fileSize);
 
-			if (freeBoard.getParentNo() != 0 && freeBoard.getParentNo() > 0) {
-				FreeBoardVO parentBoard = freeBoardService.getBoard(freeBoard.getParentNo());
-				int parentDepth = parentBoard.getDepth();
-				freeBoard.setDepth(parentDepth + 1); // 수정된 부분: 답변글의 depth 설정
-				freeBoardService.insertReplyBoard(freeBoard);
-			} else {
-				if ("공지".equals(freeBoard.getbCategory())) {
-					freeBoard.setbNoticeYn("Y");
-				} else {
-					freeBoard.setbNoticeYn("N");
-				}
+	        try {
+	            file.transferTo(saveFile);
+	            attachedFiles.add(fileMap);
+	        } catch (IllegalStateException e) {
+	            e.printStackTrace();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 
-				int maxDepth = freeBoardService.getMaxDepth(); // 최대 depth 가져오기
-				freeBoard.setDepth(maxDepth + 1); // 현재 글의 depth는 최대 depth + 1로 설정
+	    freeBoard.setViewfileList(attachedFiles);
 
-				freeBoardService.insertBoard(freeBoard); // 일반 글 작성
-			}
-		}
-		return "redirect:/list.do";
+	    if (freeBoard.getParentNo() != 0 && freeBoard.getParentNo() > 0) {
+	        FreeBoardVO parentBoard = freeBoardService.getBoard(freeBoard.getParentNo());
+	        int parentDepth = parentBoard.getDepth();
+	        freeBoard.setDepth(parentDepth + 1);
+	        freeBoardService.insertReplyBoard(freeBoard);
+	    } else {
+	        if ("공지".equals(freeBoard.getbCategory())) {
+	            freeBoard.setbNoticeYn("Y");
+	        } else {
+	            freeBoard.setbNoticeYn("N");
+	        }
+
+	        int maxDepth = freeBoardService.getMaxDepth();
+	        freeBoard.setDepth(maxDepth + 1);
+
+	        freeBoardService.insertBoard(freeBoard);
+	    }
+
+	    return "redirect:/list.do";
 	}
 
 	// 답글 등록

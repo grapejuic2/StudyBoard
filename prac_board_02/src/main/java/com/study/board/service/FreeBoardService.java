@@ -2,6 +2,7 @@ package com.study.board.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,5 +169,9 @@ public class FreeBoardService {
     void deleteBoard(int bNo) {
         freeBoardDAO.deleteBoard(bNo);
     }
+
+	public List<String> getAttachedFiles(int bNo) {
+		return freeBoardDAO.getAttachedFiles(bNo);
+	}
 
 }

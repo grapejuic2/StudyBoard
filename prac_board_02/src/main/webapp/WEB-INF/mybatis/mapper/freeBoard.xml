@@ -43,7 +43,7 @@
 		FROM free_board
 		WHERE b_no=#{bNo}
 	</select>
-
+	
 	<!-- 게시물 정보 업데이트 -->
 	<update id="updateBoard"
 		parameterType="com.study.board.vo.FreeBoardVO">
