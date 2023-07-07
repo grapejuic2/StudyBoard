@@ -63,13 +63,13 @@ body {
 .container table td input[type="submit"]:hover {
 	background-color: #555;
 }
-</style>
 
+</style>
 </head>
 <body>
 	<div class="container">
 		<h2>답글 작성</h2>
-		<form action="regist.do" method="post">
+			<form action="replySubmit.do" method="post">
 			<input type="hidden" name="parentNo" value="${parentBoard.bNo}">
 			<input type="hidden" name="parentDepth" value="${parentDepth}" />
 			<table>
